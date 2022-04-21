@@ -1,7 +1,7 @@
 const express = require('express');
 const dotenv = require('dotenv');
 const create = require('./controllers');
-dotenv.config({path: 'scripts/finageCL-Adapter/config.env'});
+dotenv.config({path: './config.env'});
 
 const app = express();
 app.use(express.json()); 

@@ -1,0 +1,27 @@
+{
+  "name": "finagecl-adapter",
+  "version": "1.0.0",
+  "description": "``` node scripts/finageCL-Adapter/app.js ``` ### Use ``` curl -X POST -H \"content-type:application/json\" \"http://localhost:3001/\" --data '{ \"id\": 0, \"data\": { \"market\": \"forex\", \"symbol\": \"xagusd\", \"method\": \"quote\"} }'",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/k4zanmalay/finage-adapter.git"
+  },
+  "keywords": [
+    "finage"
+  ],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/k4zanmalay/finage-adapter/issues"
+  },
+  "homepage": "https://github.com/k4zanmalay/finage-adapter#readme",
+  "dependencies": {
+    "@chainlink/external-adapter": "^0.2.6",
+    "dotenv": "^16.0.0",
+    "express": "^4.17.3"
+  }
+}

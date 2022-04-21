@@ -88,6 +88,7 @@ exports.historyRequest = (input, callback) => {
       console.log('max price: ', max);
       response.data.minPrice = min;
       response.data.maxPrice = max;
+      response.data.result = el[0].c;
       callback(response.status, Requester.success(jobRunID, response))
     })
    .catch(error => {
@@ -95,24 +96,17 @@ exports.historyRequest = (input, callback) => {
     })
 }
 exports.quoteRequest = (input, callback) => {
-  // The Validator helps you validate the Chainlink request data
-  //const validator = new Validator(input, customParams)
-  const jobRunID = input.id
-  const symbol = input.data.symbol.toUpperCase()
-  const apikey = process.env.API_KEY
+  const jobRunID = input.id;
+  const symbol = input.data.symbol.toUpperCase();
+  const apikey = process.env.API_KEY;
   const market = input.data.market;
   const endpoint = `${market}/${symbol}`;
-  const url = `https://api.finage.co.uk/last/${endpoint}`
+  const url = `https://api.finage.co.uk/last/${endpoint}`;
 
   const params = {
     apikey
   }
 
-  // This is where you would add method and headers
-  // you can add method like GET or POST and add it to the config
-  // The default is GET requests
-  // method = 'get' 
-  // headers = 'headers.....'
   const config = {
     url,
     params
@@ -121,13 +115,11 @@ exports.quoteRequest = (input, callback) => {
   // or connection failure
   Requester.request(config, customError)
     .then(response => {
-      // It's common practice to store the desired value at the top-level
-      // result key. This allows different adapters to be compatible with
-      // one another.
-      //response.data.result = Requester.validateResultNumber(response.data, ['ask'])
-      callback(response.status, Requester.success(jobRunID, response))
+      //SHOULD BE ask or bid depending on bet type (long - bid, short - ask)
+      response.data.result = response.data.ask;
+      callback(response.status, Requester.success(jobRunID, response));
     })
    .catch(error => {
-      callback(500, Requester.errored(jobRunID, error))
+      callback(500, Requester.errored(jobRunID, error));
     })
 }
