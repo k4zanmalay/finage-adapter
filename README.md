@@ -1,6 +1,6 @@
 ### Run 
 ```
-node scripts/finageCL-Adapter/app.js
+npm start
 ```
 ### Use
 ```
@@ -37,3 +37,7 @@ gets minute candles for a given period OR one minute candle for a given timestam
 - minPrice - lowest price of all candles
 - maxPrice - highest price of all candles
 
+### Tests 
+```
+npm run test
+```

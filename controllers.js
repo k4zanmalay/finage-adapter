@@ -102,7 +102,7 @@ exports.quoteRequest = (input, callback) => {
   const market = input.data.market;
   const endpoint = `${market}/${symbol}`;
   const url = `https://api.finage.co.uk/last/${endpoint}`;
-
+  console.log('URL: ', url);
   const params = {
     apikey
   }
@@ -115,8 +115,11 @@ exports.quoteRequest = (input, callback) => {
   // or connection failure
   Requester.request(config, customError)
     .then(response => {
-      //SHOULD BE ask or bid depending on bet type (long - bid, short - ask)
-      response.data.result = response.data.ask;
+      if(market == 'forex')
+        //SHOULD BE ask or bid depending on bet type (long - bid, short - ask)
+        response.data.result = response.data.ask;
+      if(market == 'crypto')
+        response.data.result = response.data.price;
       callback(response.status, Requester.success(jobRunID, response));
     })
    .catch(error => {
