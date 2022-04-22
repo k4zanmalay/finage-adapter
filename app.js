@@ -20,6 +20,12 @@ app.post('/', (req, res) => {
             res.status(status).json(result)
         })
     }
+    if(req.body.data.method == 'minmax') {
+        create.minmaxRequest(req.body, (status, result) => {
+            console.log('Result: ', result)
+            res.status(status).json(result)
+        })
+    }
 })
 
 const port = process.env.PORT;

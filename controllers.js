@@ -32,25 +32,19 @@ exports.historyRequest = (input, callback) => {
   // The Validator helps you validate the Chainlink request data
   let from, to;
   console.log('Processing...')
-  const validator = new Validator(input, customParams);
-  const jobRunID = validator.validated.id;
+  const jobRunID = input.id;
   
-  const symbol = validator.validated.data.symbol.toUpperCase();
-  const epoch = validator.validated.data.timestamp;
-  const market = validator.validated.data.market;
+  const symbol = input.data.symbol.toUpperCase();
+  //Add +3 hours
+  const epoch = input.data.timestamp + 10800000;
+  console.log('Timestamp: ', epoch);
+  const market = input.data.market;
 
   const date = parseDate(epoch);
 
-  if(input.data.from)
-    from = parseDate(input.data.from).HHMM;
-  else
-    from = '00:00';
-    //from = date.HHMM;
-  if(input.data.to)
-    to = parseDate(input.data.to).HHMM;
-  else
-    to = '00:01';
-    //to = date.HHMM;
+  from = parseDate(epoch).HHMM;
+  // +1 minute shift
+  to = parseDate(epoch + 60000).HHMM;
 
   const apikey = process.env.API_KEY;
   const st = from;
@@ -66,11 +60,6 @@ exports.historyRequest = (input, callback) => {
     et
   }
 
-  // This is where you would add method and headers
-  // you can add method like GET or POST and add it to the config
-  // The default is GET requests
-  // method = 'get' 
-  // headers = 'headers.....'
   const config = {
     url,
     params
@@ -82,13 +71,7 @@ exports.historyRequest = (input, callback) => {
       // It's common practice to store the desired value at the top-level
       // result key. This allows different adapters to be compatible with
       // one another.
-      let min = Math.min(...response.data.results.map(el => el.l));
-      let max = Math.max(...response.data.results.map(el => el.h));
-      console.log('min price: ', min);
-      console.log('max price: ', max);
-      response.data.minPrice = min;
-      response.data.maxPrice = max;
-      response.data.result = el[0].c;
+      response.data.result = response.data.results[0].c;
       callback(response.status, Requester.success(jobRunID, response))
     })
    .catch(error => {
@@ -124,5 +107,55 @@ exports.quoteRequest = (input, callback) => {
     })
    .catch(error => {
       callback(500, Requester.errored(jobRunID, error));
+    })
+}
+
+exports.minmaxRequest = (input, callback) => {
+  // The Validator helps you validate the Chainlink request data
+  let from, to;
+  console.log('Processing...')
+  const jobRunID = input.id;
+  
+  const symbol = input.data.symbol.toUpperCase();
+  //Add +3 hours
+  const epochFrom = input.data.from + 10800000;
+  const epochTo = input.data.to + 10800000;
+  console.log('From: ', epochFrom);
+  console.log('To: ', epochTo);
+  const market = input.data.market;
+
+  const dateFrom = parseDate(epochFrom).YYMMDD;
+  const dateTo = parseDate(epochTo).YYMMDD;
+
+  const apikey = process.env.API_KEY;
+  const endpoint = `${market}/${symbol}/1/day/${dateFrom}/${dateTo}`;
+
+  const url = `https://api.finage.co.uk/agg/${endpoint}`
+  console.log('URL: ', url);
+  
+  const params = {
+    apikey
+  }
+
+  const config = {
+    url,
+    params
+  }
+  // The Requester allows API calls be retry in case of timeout
+  // or connection failure
+  Requester.request(config, customError)
+    .then(response => {
+      // It's common practice to store the desired value at the top-level
+      // result key. This allows different adapters to be compatible with
+      // one another.
+      let min = Math.min(...response.data.results.map(el => el.l));
+      let max = Math.max(...response.data.results.map(el => el.h));
+      response.data.minPrice = min;
+      response.data.maxPrice = max;
+      response.data.result = {minPrice: min, maxPrice: max};
+      callback(response.status, Requester.success(jobRunID, response))
+    })
+   .catch(error => {
+      callback(500, Requester.errored(jobRunID, error))
     })
 }

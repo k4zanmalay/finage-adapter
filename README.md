@@ -14,28 +14,26 @@ gets last quote for a given product
 - symbol - product (e.g. eur/usd, xag/usd, eth/usd)
 
 ```
-curl -X POST -H "content-type:application/json" "http://localhost:3001/" --data '{ "id": 0, "data": { "market": "forex", "symbol": "xagusd", "timestamp": 1650402000000, "method": "history", "from": 1650412800000, "to": 1650412860000} }'
+curl -X POST -H "content-type:application/json" "http://localhost:3001/" --data '{ "id": 0, "data": { "market": "forex", "symbol": "xagusd", "timestamp": 1650402000000, "method": "history"} }'
 ```
-gets minute candles for a given period OR one minute candle for a given timestamp
+gets minute candle for a given timestamp
 
 - method - "history"
 - market - "forex", "crypto"
 - symbol - product (e.g. eur/usd, xag/usd, eth/usd)
-- timestamp - price time in epochs
+- timestamp - price time in epochs (free API restricts request time to 00:00-00:19)
 
-#### optional
-- from - start time in epochs
-- to - end time in epochs
+```
+curl -X POST -H "content-type:application/json" "http://localhost:3001/" --data '{ "id": 0, "data": { "market": "forex", "symbol": "xagusd", "from": 1648772340000, "to": 1650327540000 "method": "minmax"} }'
+```
+gets minimum and maximum price for a given period
 
-#### response
-- o - open price
-- h - high price
-- l - low price
-- c - close price
-- v - volume
-- t - timestamp
-- minPrice - lowest price of all candles
-- maxPrice - highest price of all candles
+- method - "history"
+- market - "forex", "crypto"
+- symbol - product (e.g. eur/usd, xag/usd, eth/usd)
+- from - start time
+- end - end time
+
 
 ### Tests 
 ```
