@@ -28,7 +28,7 @@ curl -X POST -H "content-type:application/json" "http://localhost:3001/" --data 
 ```
 gets minimum and maximum price for a given period
 
-- method - "history"
+- method - "minmax"
 - market - "forex", "crypto"
 - symbol - product (e.g. eur/usd, xag/usd, eth/usd)
 - from - start time
